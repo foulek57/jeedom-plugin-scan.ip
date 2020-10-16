@@ -81,6 +81,19 @@ class scan_ip extends eqLogic {
         $info->setSubType('string');
         $info->save();
         
+        $info = $this->getCmd(null, 'last_ip_v4');
+        if (!is_object($info)) {
+            $info = new scan_ipCmd();
+            $info->setName(__('Last IpV4', __FILE__));
+        }
+        $info->setLogicalId('last_ip_v4');
+        $info->setEqLogic_id($this->getId());
+        $info->setIsHistorized(0);
+        $info->setIsVisible(0);
+        $info->setType('info');
+        $info->setSubType('string');
+        $info->save();
+        
         $info = $this->getCmd(null, 'update_time');
         if (!is_object($info)) {
             $info = new scan_ipCmd();
@@ -125,25 +138,25 @@ class scan_ip extends eqLogic {
         log::add('scan_ip', 'debug', '---------------------------------------------------------------------------------------');
     }
 
-//    public function preUpdate() {
-//        log::add('scan_ip', 'debug', '---------------------------------------------------------------------------------------');
-//        log::add('scan_ip', 'debug', 'preUpdate :. lancement');
-//    }
-//
-//    public function postUpdate() {
-//        log::add('scan_ip', 'debug', '---------------------------------------------------------------------------------------');
-//        log::add('scan_ip', 'debug', 'postUpdate :. lancement');
-//    }
-//
-//    public function preRemove() {
-//        log::add('scan_ip', 'debug', '---------------------------------------------------------------------------------------');
-//        log::add('scan_ip', 'debug', 'preRemove :. lancement');
-//    }
-//
-//    public function postRemove() {
-//        log::add('scan_ip', 'debug', '---------------------------------------------------------------------------------------');
-//        log::add('scan_ip', 'debug', 'postRemove :. lancement');
-//    }
+    public function preUpdate() {
+        log::add('scan_ip', 'debug', '---------------------------------------------------------------------------------------');
+        log::add('scan_ip', 'debug', 'preUpdate :. lancement');
+    }
+
+    public function postUpdate() {
+        log::add('scan_ip', 'debug', '---------------------------------------------------------------------------------------');
+        log::add('scan_ip', 'debug', 'postUpdate :. lancement');
+    }
+
+    public function preRemove() {
+        log::add('scan_ip', 'debug', '---------------------------------------------------------------------------------------');
+        log::add('scan_ip', 'debug', 'preRemove :. lancement');
+    }
+
+    public function postRemove() {
+        log::add('scan_ip', 'debug', '---------------------------------------------------------------------------------------');
+        log::add('scan_ip', 'debug', 'postRemove :. lancement');
+    }
 
 // Non obligatoire mais permet de modifier l'affichage du widget si vous en avez besoin
 
@@ -475,7 +488,7 @@ class scan_ip extends eqLogic {
         self::prepareJsonFolder($_config);
         self::createJsonFile($_config, $_json);
 
-        log::add('scan_ip', 'debug', 'recordInJson :. Enregistrement du Json : ' . $config["jsonTampon"]);
+        log::add('scan_ip', 'debug', 'recordInJson :. Enregistrement du Json : ' . $_config["jsonTampon"]);
         log::add('scan_ip', 'debug', '---------------------------------------------------------------------------------------');
     }
     
@@ -490,9 +503,9 @@ class scan_ip extends eqLogic {
     
     public static function prepareJsonFolder($_config){
         log::add('scan_ip', 'debug', 'prepareJsonFolder :. Lancement');
-        if (!is_dir($config["folderTampon"])) {
+        if (!is_dir($_config["folderTampon"])) {
             log::add('scan_ip', 'debug', 'miseEnCacheJson :.  Création du dossier :' . $_config["folderTampon"]);
-            mkdir($config["folderTampon"], 0777);
+            mkdir($_config["folderTampon"], 0777);
         }
     }
     
@@ -634,6 +647,7 @@ class scan_ipCmd extends cmd {
             $eqlogic->checkAndUpdateCmd('ip_v4', $device["ip_v4"]);
         } else {
             $eqlogic->checkAndUpdateCmd('ip_v4', NULl);
+            $eqlogic->checkAndUpdateCmd('last_ip_v4', $device["ip_v4"]);
         }
         $eqlogic->checkAndUpdateCmd('update_time', $device["time"]);
         $eqlogic->checkAndUpdateCmd('update_date', date("d/m/Y H:i:s", $device["time"]));
